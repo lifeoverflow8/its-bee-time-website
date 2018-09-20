@@ -1,13 +1,20 @@
 <html>
 <body>
+
+  <button id="my-button">Click me pls</button>
+  
 <script>
 
-navigator.usb.requestDevice({filters: [{ vendorId: 0x2341 }]})
+document.querySelector('#my-button').addEventListener('click', function(event) {
+  navigator.usb.requestDevice({filters: [{ vendorId: 0x2341 }]})
 .then(device => {
-  console.log(device.productName);      // "Arduino Micro"
-  console.log(device.manufacturerName); // "Arduino LLC"
+  console.log(device.productName);      // "Microbit?"
+  console.log(device.manufacturerName); // "BBC?"
 })
 .catch(error => { console.log(error); });
+});
+  
+
 
 </script>
 <body>
