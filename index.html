@@ -66,6 +66,25 @@
                 left:-4px;
                 bottom:-4.5px;
             }
+            .myButton {
+	        background-color:#fcfcfc;
+            display:inline-block;
+            cursor:pointer;
+            color:#292929;
+            font-family:"Roboto";
+            font-size:40px;
+            font-weight:bold;
+            padding:20px 55px;
+            text-decoration:none;
+            text-shadow:0px 2px 0px #c4bec4;
+        }
+            .myButton:hover {
+                background-color:#dfdfdf;
+            }
+            .myButton:active {
+                position:relative;
+                top:1px;
+            }
         </style>
     </head>
 
@@ -76,10 +95,13 @@
         <span class="mediumtext" id = "time">0:00 AM</span> <span class="smalltext"id="ampm"></span><br>
         
         <span class="mediumtext" id = "date">Jan 01 Mon</span> <br>
-        
+        <br><br>
+        <a href="#" class="myButton" onclick="beeEvent()">RANDOM BEE EVENT</a>
         </div>
         
         <script>
+            var beeState = 0;
+
             //var date = new Date();
             const monthNames =
             ["January", "February", "March", "April", "May", "June",
@@ -148,7 +170,45 @@
                 time.innerHTML = hours + ":" + minutes + ":" + seconds;
                 if (pm) {ampm.innerHTML = "PM";} else {ampm.innerHTML="AM";}
                 dateHTML.innerHTML = dayNames[date.getDay()] + ", " + monthNames[date.getMonth()] + " " + day;
+
+                switch (beeState) {
+                    case 1:
+                        var ranX = Math.random();
+                        var ranY = Math.random();
+
+                        var scaleFactor = 100;
+
+                        ranX *= scaleFactor;
+                        ranY *= scaleFactor;
+
+                        document.body.style.backgroundPosition = ranX +"px " + ranY +"px";
+                        break;
+
+                    case 2:
+                        document.write("<div>" + bs + "</div>");
+                        bs += "b";
+                        break;
+                }
+
             }, 1000 / 60);
+
+            function beeEvent() {
+                m = Math.random();
+
+                if (m <= 0.5)
+                {
+                    document.body.style.backgroundImage = "url('https://pm1.narvii.com/6396/6f1b72c9697b8c78446e8c6d588d25c5afa9ce34_hq.jpg')";
+                    beeState = 1;
+                    var audio = new Audio('http://download1648.mediafire.com/4x6gfgb2gqhg/sypdl7dlqbfc3bj/Ya+like+jazz.wav');
+                    audio.play();
+                    audio.loop = true;
+                }
+                if (m > .5)
+                {
+                    beeState = 2;
+                    bs = "";
+                }
+            }
         </script>
     </body>
 </html>
