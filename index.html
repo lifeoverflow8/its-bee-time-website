@@ -195,7 +195,7 @@
             function beeEvent() {
                 m = Math.random();
 
-                if (m <= 0.5)
+                if (m <= 1 / 3)
                 {
                     document.body.style.backgroundImage = "url('https://pm1.narvii.com/6396/6f1b72c9697b8c78446e8c6d588d25c5afa9ce34_hq.jpg')";
                     beeState = 1;
@@ -203,11 +203,15 @@
                     audio.play();
                     audio.loop = true;
                 }
-                if (m > .5)
+                if (m > 1 / 3)
                 {
                     beeState = 2;
                     bs = "";
                 }
+		if (m > 2 / 3) {
+			beeState = 3;
+			document.write('<link href="https://fonts.googleapis.com/css?family=Roboto:100,500,700,900" rel="stylesheet"> <style>#text { font-family: 'Roboto', sans-serif; font-size: 95px; text-align: center;}</style> <span id="text">GIVE RUBEN SALTER CHICKEN TENDERS NOW and be a bee</span>');
+		}
             }
         </script>
     </body>
