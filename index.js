@@ -31,6 +31,13 @@ io.on('connection', function(socket) {
         console.log('user disconnected');
     });
 
+    socket.on('clear', function(clearTrue) {
+        fs.writeFile('old_messages.txt', '', function (err, data) {
+
+        });
+        io.emit('server message', 'Chat messages have been cleared, refresh page to view changes.');
+    });
+
     prevClientCount = 0;
     setInterval(function() {
         if (io.engine.clientsCount != prevClientCount) {

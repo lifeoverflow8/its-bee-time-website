@@ -32,8 +32,13 @@
         .red {
             color: #ff0000;
         }
+
+        .server {
+            color: #881212;
+        }
       
         .yellow {
+            font-weight: bold;
             color: 'yellow';
         }
 
@@ -53,8 +58,9 @@
     </form>
 
     <script>
+        var socket = io();
         $(function() {
-            var socket = io();
+            
 
             $('#messages').append($('<li class="text">').text("Welcome to the It's Bee Time Network!"));
 
@@ -68,6 +74,10 @@
             socket.on('chat message', function(msg) {
                 message = $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
                 checkForImages();
+            });
+
+            socket.on('server message', function(msg) {
+                $('#messages').append($('<li class="server" class="text">').html('SERVER: ' + msg));
             });
 
             socket.on('old_messages', function(msg) {
@@ -96,6 +106,10 @@
                 newMessage += messageLines[i] + '<br>';
             }
          
+            if (newMessage.substr(0, newMessage.length - 4) == '/clear') {
+                socket.emit('clear', true);
+            }
+
             return newMessage;
         }
 
