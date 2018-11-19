@@ -82,6 +82,7 @@
 
             socket.on('old_messages', function(msg) {
                 //console.log(msg);
+                $('#messages').html('');
                 $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
                     checkForImages();
             });
