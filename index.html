@@ -45,6 +45,7 @@
   <body>
     <ul id="messages"></ul>
     <br>
+    <span class="text" id="users_connected">0 users currently connected.</span>
     <form action="">
       <textarea cols="50" rows="8" id="m" autocomplete="off"></textarea>
       <br>
@@ -74,6 +75,11 @@
                 $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
                     checkForImages();
             });
+            
+            socket.on('user count change', function(count) {
+                $('#users_connected').html(count + ' users currently connected.');
+            });
+
         });
 
         function evaluateInput(input) {

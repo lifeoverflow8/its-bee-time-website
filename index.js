@@ -19,9 +19,6 @@ io.on('connection', function(socket) {
         console.log('message: ' + msg);
         io.emit('chat message', msg);
 
-
-
-
         fs.writeFile('old_messages.txt', getOldMessages() + msg + '\n', function (err, data) {
             if (!err) {
                 console.log('Successfully written message to old_messages.txt');
@@ -33,6 +30,16 @@ io.on('connection', function(socket) {
     socket.on('disconnect', function() {
         console.log('user disconnected');
     });
+
+    prevClientCount = 0;
+    setInterval(function() {
+        if (io.engine.clientsCount != prevClientCount) {
+            prevClientCount = io.engine.clientsCount;
+            io.emit('user count change', io.engine.clientsCount);
+        }
+        
+        console.log(io.engine.clientsCount);
+    }, 1000);
 });
 
 var port = process.env.PORT || 3000;
