@@ -33,9 +33,9 @@
             color: #ff0000;
         }
       
-      .yellow {
-        color: 'yellow';
-      }
+        .yellow {
+            color: 'yellow';
+        }
 
     </style>
 
@@ -65,12 +65,14 @@
             });
 
             socket.on('chat message', function(msg) {
-                $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
+                message = $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
+                checkForImages();
             });
 
             socket.on('old_messages', function(msg) {
-                console.log(msg);
+                //console.log(msg);
                 $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
+                    checkForImages();
             });
         });
 
@@ -89,6 +91,18 @@
             }
          
             return newMessage;
+        }
+
+        function checkForImages() {
+            for (i = 0; i < document.images.length; i ++) {
+                if (document.images[i].width > 300) {
+                    document.images[i].width = 300;
+                }
+
+                if (document.images[i].height > 300) {
+                    document.images[i].height = 300;
+                }
+            }
         }
     </script>
   </body>
