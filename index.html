@@ -88,7 +88,7 @@
                 newMessage += messageLines[i] + '<br>';
             }
 
-            if (newMessage.includes('img') || newMessage.includes('image')) {
+            if (newMessage.toLowerCase().includes('img') || newMessage.includes('image')) {
                 newMessage = "user has attempted to write an illegal message"; 
             }
          
