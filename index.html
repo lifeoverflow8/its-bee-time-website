@@ -77,6 +77,12 @@
             console.log(messageLines);
 
             for (i = 0; i < messageLines.length; i ++) {
+              var words = messageLines[i].split(' ');
+              for (j = 0; j < words.length; j++;) {
+                if (words[j][0] == '#'] {
+                    words[j] = '<span class="yellow"> + words[j] + '</span>';
+                    }
+              }
                 if (messageLines[i][0] == '>') {
                     messageLines[i] = '<span class="red"> ' + messageLines[i] + '</span>';
                 }
