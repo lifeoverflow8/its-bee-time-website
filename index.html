@@ -48,6 +48,8 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
   </head>
   <body>
+      <span id="text">Welcome to the It's Bee Time Network!</span>
+      <br>
     <ul id="messages"></ul>
     <br>
     <span class="text" id="users_connected">0 users currently connected.</span>
@@ -62,7 +64,7 @@
         $(function() {
             
 
-            $('#messages').append($('<li class="text">').text("Welcome to the It's Bee Time Network!"));
+            
 
             $('form').submit(function() {
                 socket.emit('chat message', $('#m').val());
