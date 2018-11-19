@@ -32,6 +32,10 @@
         .red {
             color: #ff0000;
         }
+      
+      .yellow {
+        color: 'yellow';
+      }
 
     </style>
 
@@ -79,7 +83,7 @@
             for (i = 0; i < messageLines.length; i ++) {
               var words = messageLines[i].split(' ');
               for (j = 0; j < words.length; j++;) {
-                if (words[j][0] == '#'] {
+                if (words[j][0] == '#']) {
                     words[j] = '<span class="yellow"> + words[j] + '</span>';
                     }
               }
