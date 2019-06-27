@@ -1,226 +1,132 @@
+<!doctype html>
 <html>
-    <head>
-        <title>God Help Us All</title>
-        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu+Mono" />
-<style>
-
-* {
-    margin: 0;
-    padding: 0;
-    font-family: "Ubuntu Mono";
-}
-a {
-    color: blue;
-}
-input {
-    border-width: 0px;
-    font-size: 14px;
-    line-height: 20px;
-    outline:none;
-}
-
-input:focus, textarea:focus, select:focus {
-    outline: none;
-}
-
-body {
-    font-family: monospace;
-    font-size: 14px;
-    background-color: #000
-}
-
-.text {
-    color: #00ff00;
-}
-
-#messages {
-    list-style-type: none;
-}
-
-#message {
-    background-color: #000;
-    color: #00ff00;
-    width: 90%;
-}
-
-.white {
-    color: #fff;
-}
-
-.red {
-    color: #ff0000;
-}
-
-.server {
-    color: #881212;
-}
-
-.yellow {
-    color: #ffff00;
-}
-
-</style>
-    </head>
-    
-    <body>
-        <span class="yellow">&nbsp;Welcome to the It's Bee Time Network!</span> <br>
-        <br>
-        <span class="yellow">&nbsp;nickname:</span>
-        <input id="nickname" value="Anon"> <br>
-        <br>
-        <span class="yellow">&nbsp;nickname colour:</span><input id="nick-color" type="color" value="#00ff00"> <br> <br>
-        <span class="yellow">&nbsp;message colour:&nbsp;</span><input id="msg-color" type="color" value="#ffffff"> <br>
-        <br>
-        <span class="yellow">&nbsp;admin password:</span> <input id="adminpassword" type="password">
-        <br> <br>
-        <span class="yellow">&nbsp;admin commands: </span> <input id="admincommand" type="text"> 
-        <button id="execute-command-button">Execute</button>
-        <br><br>
-        <span class="yellow">&nbsp;execute javascript</span> 
-        <br>
-        &nbsp;<textarea id="script-execute"></textarea>
-        <button id="execute-script-button">Execute</button>
-        <br><br>
-        <hr>
-        <br>
-        <ul id="messages"></ul>
-        <form action="">
-            <span class="text">&nbsp;></span><input id="message" autocomplete="off"/>
-        </form>
-        <br>
-        <span class="white">&nbsp;Attach Media:</span> 
-        <input id="attach-media" type="checkbox"> <br>
-        <div id="attached-media-options" class="dropdown">
-            <form id="media-form">
-                <span class="white">&nbsp;Still Work in Progress: (only images work)</span> <br>
-                    &nbsp;<input type="radio" name="media" value="image" checked> 
-                    <span class="white">Image/Gif</span><br>
-                    &nbsp;<input type="radio" name="media" value="video">
-                    <span class="white">Video</span><br>
-                    &nbsp;<input type="radio" name="media" value="yt">
-                    <span class="white">Youtube Video</span><br>
-                    &nbsp;<input type="radio" name="media" value="site">
-                    <span class="white">Website</span><br>
-                    &nbsp;<input type="radio" name="media" value="scrolltext">
-                    <span class="white">Scrolling Text</span><br>
-            </form>
-
-            <span class="white">&nbsp;URL: </span>
-            <input id="media-url">
-        </div>
-
-        <script src="/socket.io/socket.io.js"></script>
-        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
-<script>
-
-$(function () {
-    time = 0;
-    lastMessageTime = -600;
-    var socket = io();
-
-    var mediaType = 'none';
-    var mediaUrl = '';
-
-    $('#message').focus();
-
-    $('form').submit(function(e) {
-        e.preventDefault();
-
-        if (time - lastMessageTime < 60) {
-            alert('Ya typing too quickly mate, leave. Thanks');
-            return false;
+  <head>
+    <title>Socket.IO chat</title>
+    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Ubuntu+Mono" />
+    <style>
+        body {
+            background-color: #000;
         }
-        else {
-            if ($('#message').val().trim() == '') {
+
+        * { font-family: "Ubuntu Mono"; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 15.4px; } h3 { font-family: "Ubuntu Mono"; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 700; line-height: 15.4px; } p { font-family: "Ubuntu Mono"; font-size: 14px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 20px; } blockquote { font-family: "Ubuntu Mono"; font-size: 21px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 30px; } pre { font-family: "Ubuntu Mono"; font-size: 13px; font-style: normal; font-variant: normal; font-weight: 400; line-height: 18.5714px; }
+        .text {
+            color: #00ff00;
+        }
+
+        #messages {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+
+        }
+
+        #messages li {
+            padding: 0px 0px;
+        }
+
+        #m {
+            background-color: #000;
+            color: #00ff00;
+        }
+
+        .red {
+            color: #ff0000;
+        }
+
+        .server {
+            color: #881212;
+        }
+      
+        .yellow {
+            font-weight: bold;
+            color: 'yellow';
+        }
+
+    </style>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+  </head>
+  <body>
+      <span class="text">Welcome to the It's Bee Time Network!</span>
+      <br>
+    <ul id="messages"></ul>
+    <br>
+    <span class="text" id="users_connected">0 users currently connected.</span>
+    <form action="">
+      <textarea cols="50" rows="8" id="m" autocomplete="off"></textarea>
+      <br>
+      <button>Send</button>
+    </form>
+
+    <script>
+        var socket = io();
+        $(function() {
+            
+
+            
+
+            $('form').submit(function() {
+                socket.emit('chat message', $('#m').val());
+                $('#m').val('');
+
                 return false;
-            }
-            else {
-                nicknameColor = document.getElementById('nick-color').value;
-        messageColor = document.getElementById('msg-color').value;
+            });
 
-        socket.emit('chatmessage', [$('#nickname').val(), $('#message').val(), nicknameColor, messageColor, {type: mediaType, url: mediaUrl}]);
-        $('#message').val('');
+            socket.on('chat message', function(msg) {
+                message = $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
+                checkForImages();
+            });
 
-        lastMessageTime = time;
+            socket.on('server message', function(msg) {
+                $('#messages').append($('<li class="server" class="text">').html('SERVER: ' + msg));
+            });
 
-        return false;
-            }
+            socket.on('old_messages', function(msg) {
+                //console.log(msg);
+                $('#messages').html('');
+                $('#messages').append($('<li class="text">').html(evaluateInput(msg)));
+                    checkForImages();
+            });
+            
+            socket.on('user count change', function(count) {
+                $('#users_connected').html(count + ' users currently connected.');
+            });
 
-        }
-    });
-
-    socket.on('chatmessage', function(msg) {
-        var temp = document.createElement('div');
-        temp.innerHTML = msg[0];
-        nicknameHtml = '&nbsp; <span style="color:' + msg[2] + '"> ' + temp.innerText + ': ' + '</span>';
-        temp.innerHTML = msg[1];
-        messageHtml = '<span style="color:' + msg[3] + '">' + temp.innerText + '</span>';
-
-        switch(msg[4].type) {
-
-            case 'image':
-            console.log(msg[4]);
-                messageHtml += '<br>&nbsp;&nbsp;<a href="' + msg[4].url + '">' + msg[4].url + '</a><br>&nbsp;&nbsp;<image class="message-image" src=' + msg[4].url + '></image>';
-                $('#media-url').val('');
-                $('#attach-media').prop('checked', 'false');
-                break;
-        }
-
-        $('#messages').append($('<li class="text">').html(nicknameHtml + messageHtml));
         });
 
-    socket.on('message_history', function(msg) {
-        $('#messages').html('');
-        $('#messages').append($('<li class="text">').html(msg));
-    });
+        function evaluateInput(input) {
+            var newMessage = '';
 
-    socket.on('scriptexecute', function(scr) {
-        $('body').append($('<script>').html(scr));
-    });
+            messageLines = input.split('\n');
+            console.log(messageLines);
 
-    $('#execute-command-button').click(function() {
-        socket.emit('admincommand', [$('#adminpassword').val(), $('#admincommand').val()]);
-    });
+            for (i = 0; i < messageLines.length; i ++) {
+                if (messageLines[i][0] == '>') {
+                    messageLines[i] = '<span class="red"> ' + messageLines[i] + '</span>';
+                }
 
-    $('#execute-script-button').click(function() {
-        console.log('reeee');
-        socket.emit('scriptexecute', [$('#adminpassword').val(), $('#script-execute').val()]);
-    });
+                newMessage += messageLines[i] + '<br>';
+            }
+         
+            if (newMessage.substr(0, newMessage.length - 4) == '/clear') {
+                socket.emit('clear', true);
+            }
 
-
-
-    setInterval(function() {
-    if ($('#attach-media').prop('checked')) {
-        $('#attached-media-options').show();
-        mediaType = $('input[name=media]:checked').val();
-    }
-    else {
-        $('#attached-media-options').hide();
-        mediaType = 'none';
-    }
-
-    mediaUrl = $('#media-url').val();
-    resizeImages();
-    time++;
-}, 1000 / 60);
-
-function resizeImages() {
-    for (i = 0; i < document.images.length; i ++) {
-        if (document.images[i].width > 250) {
-            document.images[i].width = 250;
-
-            document.images[i].height *= 250 / document.images[i].width;
+            return newMessage;
         }
 
-        if (document.images[i].height > 250) {
-            document.images[i].height = 250;
+        function checkForImages() {
+            for (i = 0; i < document.images.length; i ++) {
+                if (document.images[i].width > 300) {
+                    document.images[i].width = 300;
+                }
 
-            document.images[i].width *= 250 / document.images[i].height;
+                if (document.images[i].height > 300) {
+                    document.images[i].height = 300;
+                }
+            }
         }
-    }
-}
-});
-
-</script>
-    </body>
+    </script>
+  </body>
 </html>

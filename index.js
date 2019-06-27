@@ -1,81 +1,61 @@
 var app = require('express')();
-var http = require('http').createServer(app);
+var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var fs = require('fs');
-var htmlToText = require('html-to-text');
 
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-var password = fs.readFileSync('password.txt').toString();
+var clients = [];
 
 io.on('connection', function(socket) {
-    io.to(`${socket.id}`).emit('message_history', getMessageHistory());
-    socket.on('disconnect', function() {
+    console.log('a user has connected');
+    clients.push(socket.id);
 
-    });
+    io.to(`${socket.id}`).emit('old_messages', getOldMessages());
 
-    socket.on('chatmessage', function(msg) {
-        console.log('message: ' + msg[1]);
-        msg0 = htmlToText.fromString(msg[0]);
-        nicknameHtml = '&nbsp; <span style="color:' + msg[2] + '"> ' + msg0 + ': ' + '</span>';
-        msg1 = htmlToText.fromString(msg[1]);
-        msg1 = evaluateInput(msg1);
-        msgHtml = '<span style="color:' + msg[3] + '">' + msg1 + '</span>';
-        messageHtml = '<li class="text">' + nicknameHtml + msgHtml + '</li>'
+    socket.on('chat message', function(msg) {
+        console.log('message: ' + msg);
+        io.emit('chat message', msg);
 
-        switch(msg[4].type) {
-            case 'image':
-            messageHtml += '&nbsp;&nbsp;<a href="' + msg[4].url + '">' + msg[4].url + '</a><br>&nbsp;&nbsp;<image class="message-image" src=' + msg[4].url + '></image>';
-                break;
-        }
-
-        fs.writeFile('message_history.txt', getMessageHistory() + messageHtml, function (err, data) {
-            console.log('Successfully written message to message_history.txt')
-        })
-        io.emit('chatmessage', msg);
-    });
-
-    socket.on('admincommand', function(msg) {
-        if (msg[0] == password) {
-            console.log('this happens reeee');
-            switch(msg[1]) {
-                case '/clear':
-                    clearMessageHistory();
-                    break;
+        fs.writeFile('old_messages.txt', getOldMessages() + msg + '\n', function (err, data) {
+            if (!err) {
+                console.log('Successfully written message to old_messages.txt');
             }
-        }
-        else 
-        {
-            console.log(msg[0]);
-        }
+        });
+
     });
 
-    socket.on('scriptexecute', function(scr) {
-        if (scr[0] == password) {
-            io.emit('scriptexecute', scr[1]);
-        }
+    socket.on('disconnect', function() {
+        console.log('user disconnected');
     });
+
+    socket.on('clear', function(clearTrue) {
+        fs.writeFile('old_messages.txt', '', function (err, data) {
+
+        });
+        io.emit('server message', 'Chat messages have been cleared, refresh page to view changes.');
+    });
+
+    prevClientCount = 0;
+    setInterval(function() {
+        if (io.engine.clientsCount != prevClientCount) {
+            prevClientCount = io.engine.clientsCount;
+            io.emit('user count change', io.engine.clientsCount);
+        }
+        
+        console.log(io.engine.clientsCount);
+    }, 1000);
 });
 
 var port = process.env.PORT || 3000;
 http.listen(port, function() {
-    console.log('Listening on Port: ' + port);
+    console.log('listening on port: ' + port);
 });
 
-function getMessageHistory() {
-    text = fs.readFileSync('message_history.txt').toString();
-
+function getOldMessages() {
+    text =  fs.readFileSync('old_messages.txt').toString();
+    console.log(text);
     return text;
-}
-
-function clearMessageHistory() {
-    fs.writeFile('message_history.txt', '', function(err, data) {
-
-    });
-}
-
-function evaluateInput(input) {
-    return input;
 }
