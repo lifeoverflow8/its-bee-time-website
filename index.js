@@ -1,61 +1,13 @@
-var app = require('express')();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var fs = require('fs');
+var express = require('express')
+var app = express()
 
-app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/index.html');
-});
+app.set('port', (process.env.PORT || 5000))
+app.use(express.static(__dirname + '/public'))
 
-var clients = [];
+app.get('/', function(request, response) {
+  response.send('Hello World!')
+})
 
-io.on('connection', function(socket) {
-    console.log('a user has connected');
-    clients.push(socket.id);
-
-    io.to(`${socket.id}`).emit('old_messages', getOldMessages());
-
-    socket.on('chat message', function(msg) {
-        console.log('message: ' + msg);
-        io.emit('chat message', msg);
-
-        fs.writeFile('old_messages.txt', getOldMessages() + msg + '\n', function (err, data) {
-            if (!err) {
-                console.log('Successfully written message to old_messages.txt');
-            }
-        });
-
-    });
-
-    socket.on('disconnect', function() {
-        console.log('user disconnected');
-    });
-
-    socket.on('clear', function(clearTrue) {
-        fs.writeFile('old_messages.txt', '', function (err, data) {
-
-        });
-        io.emit('server message', 'Chat messages have been cleared, refresh page to view changes.');
-    });
-
-    prevClientCount = 0;
-    setInterval(function() {
-        if (io.engine.clientsCount != prevClientCount) {
-            prevClientCount = io.engine.clientsCount;
-            io.emit('user count change', io.engine.clientsCount);
-        }
-        
-        console.log(io.engine.clientsCount);
-    }, 1000);
-});
-
-var port = process.env.PORT || 3000;
-http.listen(port, function() {
-    console.log('listening on port: ' + port);
-});
-
-function getOldMessages() {
-    text =  fs.readFileSync('old_messages.txt').toString();
-    console.log(text);
-    return text;
-}
+app.listen(app.get('port'), function() {
+  console.log("Node app is running at localhost:" + app.get('port'))
+})
