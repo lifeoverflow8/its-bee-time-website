@@ -3,7 +3,7 @@ var http = require('http').createServer(app);
 var io = require('socket.io')(http);
 var fs = require('fs');
 var htmlToText = require('html-to-text');
-
+//jews
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/index.html');
 });
