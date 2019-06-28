@@ -29,6 +29,12 @@ io.on('connection', function(socket) {
             case 'image':
             messageHtml += '&nbsp;&nbsp;<a href="' + msg[4].url + '">' + msg[4].url + '</a><br>&nbsp;&nbsp;<image class="message-image" src=' + msg[4].url + '></image>';
                 break;
+
+                case 'yt':
+                videoId = getId(msg[4].url);
+                messageHtml += '&nbsp;&nbsp;<a href="' + msg[4].url + '">' + msg[4].url + '</a><br>&nbsp;&nbsp;<iframe width="560" height="315" src="//www.youtube.com/embed/' 
+    + videoId + '" frameborder="0" allowfullscreen></iframe>';
+                break;
         }
 
         fs.writeFile('message_history.txt', getMessageHistory() + messageHtml, function (err, data) {
@@ -78,4 +84,15 @@ function clearMessageHistory() {
 
 function evaluateInput(input) {
     return input;
+}
+
+function getId(url) {
+  var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  var match = url.match(regExp);
+
+  if (match && match[2].length == 11) {
+      return match[2];
+  } else {
+      return 'error';
+  }
 }

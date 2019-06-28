@@ -164,6 +164,14 @@ $(function () {
                 $('#media-url').val('');
                 $('#attach-media').prop('checked', false);
                 break;
+
+            case 'yt':
+                videoId = getId(msg[4].url);
+                messageHtml += '<br>&nbsp;&nbsp;<a href="' + msg[4].url + '">' + msg[4].url + '</a><br>&nbsp;&nbsp;<iframe width="560" height="315" src="//www.youtube.com/embed/' 
+    + videoId + '" frameborder="0" allowfullscreen></iframe>';;
+                $('#media-url').val('');
+                $('#attach-media').prop('checked', false);
+                break;
         }
 
         $('#messages').append($('<li class="text">').html(nicknameHtml + messageHtml));
@@ -220,6 +228,17 @@ function resizeImages() {
     }
 }
 });
+
+function getId(url) {
+    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    var match = url.match(regExp);
+
+    if (match && match[2].length == 11) {
+        return match[2];
+    } else {
+        return 'error';
+    }
+}
 
 </script>
     </body>
