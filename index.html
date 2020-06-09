@@ -43,6 +43,22 @@ body {
     width: 90%;
 }
 
+#message-div {
+    width:100%;
+    height:400px;
+    overflow: scroll;
+    overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+    width: 0px;  /* Remove scrollbar space */
+    background: transparent;  /* Optional: just make scrollbar invisible */
+}
+/* Optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
+
 .white {
     color: #fff;
 }
@@ -63,7 +79,7 @@ body {
     </head>
     
     <body>
-        <span class="yellow">&nbsp;Welcome to the It's Bee Time Network!</span> <br>
+        <span class="yellow">&nbsp;why did my wife leave me?</span> <br>
         <br>
         <span class="yellow">&nbsp;nickname:</span>
         <input id="nickname" value="Anon"> <br>
@@ -83,7 +99,10 @@ body {
         <br><br>
         <hr>
         <br>
-        <ul id="messages"></ul>
+        <div id="message-div">
+            <ul id="messages"></ul>
+        </div>
+
         <form action="">
             <span class="text">&nbsp;></span><input id="message" autocomplete="off"/>
         </form>
@@ -92,17 +111,11 @@ body {
         <input id="attach-media" type="checkbox"> <br>
         <div id="attached-media-options" class="dropdown">
             <form id="media-form">
-                <span class="white">&nbsp;Still Work in Progress: (only images work)</span> <br>
                     &nbsp;<input type="radio" name="media" value="image" checked> 
                     <span class="white">Image/Gif</span><br>
                     &nbsp;<input type="radio" name="media" value="video">
-                    <span class="white">Video</span><br>
-                    &nbsp;<input type="radio" name="media" value="yt">
                     <span class="white">Youtube Video</span><br>
                     &nbsp;<input type="radio" name="media" value="site">
-                    <span class="white">Website</span><br>
-                    &nbsp;<input type="radio" name="media" value="scrolltext">
-                    <span class="white">Scrolling Text</span><br>
             </form>
 
             <span class="white">&nbsp;URL: </span>
@@ -175,15 +188,22 @@ $(function () {
         }
 
         $('#messages').append($('<li class="text">').html(nicknameHtml + messageHtml));
+
+            var element = document.getElementById('message-div');
+element.scrollTop = element.scrollHeight;
         });
 
     socket.on('message_history', function(msg) {
         $('#messages').html('');
         $('#messages').append($('<li class="text">').html(msg));
+
+            var element = document.getElementById('message-div');
+element.scrollTop = element.scrollHeight;
+
     });
 
-    socket.on('scriptexecute', function(scr) {
-        $('body').append($('<script>').html(scr));
+    socket.on('scriptexecute', function(src) {
+        eval(src);
     });
 
     $('#execute-command-button').click(function() {
@@ -198,6 +218,7 @@ $(function () {
 
 
     setInterval(function() {
+
     if ($('#attach-media').prop('checked')) {
         $('#attached-media-options').show();
         mediaType = $('input[name=media]:checked').val();
